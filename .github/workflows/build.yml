@@ -1,0 +1,18 @@
+name: build
+on: [workflow_dispatch]
+jobs:
+  package:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        repository: evilpenguin/SSLBypass
+    - name: Install Theos
+      run: bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+    - name: Build
+      run: make package FINALPACKAGE=1
+    - name: Upload
+      uses: actions/upload-artifact@v3
+      with:
+        name: deb
+        path: packages/*.deb
