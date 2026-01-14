@@ -9,13 +9,19 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: evilpenguin/SSLBypass
-      - name: Install Theos
-        run: bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
-      - name: Build
+
+      - name: Install Theos（已打包 SDK，绕过墙）
         run: |
-          export THEOS=$HOME/theos
+          curl -L -o theos.tar.zst https://github.com/theos/theos/releases/download/3.0.0/theos-3.0.0-macos.tar.zst
+          sudo tar -I zstd -xf theos.tar.zst -C /opt
+          echo "THEOS=/opt/theos" >> $GITHUB_ENV
+
+      - name: Build deb
+        run: |
+          export THEOS=/opt/theos
           make package FINALPACKAGE=1
-      - name: Upload
+
+      - name: Upload deb
         uses: actions/upload-artifact@v4
         with:
           name: deb
